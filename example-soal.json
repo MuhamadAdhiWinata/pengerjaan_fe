@@ -1,0 +1,81 @@
+{
+  "soal_generate": {
+    "title": "Ujian Karakter & Logika",
+    "questions": [
+      {
+        "id": 1,
+        "type": "matching",
+        "question": "Matching karakter dan temannya",
+        "left_items": [
+          "Tokoh yang memiliki ribuan kutu di rambut.",
+          "Tokoh yang risih kepada Ajeng.",
+          "Tokoh yang berloncatan mencari negeri baru."
+        ],
+        "right_items": ["Teman-teman", "Kutu", "Telur kutu", "Ajeng"],
+        "correct_matches": [3, 0, 1]
+      },
+      {
+        "id": 2,
+        "type": "multiple_choice",
+        "question": "Siapa penemu lampu pijar?",
+        "options": [
+          "Thomas Edison",
+          "Isaac Newton",
+          "Albert Einstein",
+          "Nikola Tesla"
+        ],
+        "correct_answer": 0
+      },
+      {
+        "id": 3,
+        "type": "essay",
+        "question": "Jelaskan proses fotosintesis secara singkat."
+      },
+      {
+        "id": 4,
+        "type": "checkbox",
+        "question": "Pilih hewan yang termasuk mamalia:",
+        "options": ["Sapi", "Ayam", "Lumba-lumba", "Ikan Paus"],
+        "correct_answers": [0, 2, 3]
+      },
+      {
+        "id": 5,
+        "type": "fillblank",
+        "text": "_____ adalah ibu kota Indonesia.",
+        "parts": [
+          { "t": "blank", "key": "capital", "placeholder": "Kota" },
+          { "t": "text", "v": " adalah ibu kota Indonesia." }
+        ],
+        "answers": {
+          "capital": {
+            "accept": ["Jakarta", "/^dk\\s?jakarta$/i"],
+            "caseSensitive": false,
+            "normalize": ["trim", "lower"]
+          }
+        }
+      },
+      {
+        "id": 6,
+        "type": "fillblank",
+        "text": "_____ adalah _____.",
+        "parts": [
+          { "t": "blank", "key": "subject", "placeholder": "saya" },
+          { "t": "text", "v": " adalah " },
+          { "t": "blank", "key": "object", "placeholder": "Venom" }
+        ],
+        "answers": {
+          "subject": {
+            "accept": ["Saya", "Aku"],
+            "caseSensitive": false,
+            "normalize": ["trim", "lower"]
+          },
+          "object": {
+            "accept": ["Venom", "Superman"],
+            "caseSensitive": false,
+            "normalize": ["trim", "lower"]
+          }
+        }
+      }
+    ]
+  }
+}
