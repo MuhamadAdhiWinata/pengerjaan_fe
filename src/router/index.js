@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Layout from "../components/Layout.vue";
-import DashboardView from "../views/DashboardView.vue";
 import LoginView from "../views/LoginView.vue";
 import SoalView from "../views/soalView.vue";
+import Home from "../views/home.vue";
 
 const routes = [
   {
@@ -12,7 +12,7 @@ const routes = [
       {
         path: "home",
         name: "home",
-        component: DashboardView,
+        component: Home,
       },
       {
         path: "soal",
