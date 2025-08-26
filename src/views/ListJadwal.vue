@@ -1,18 +1,29 @@
 <template>
-  <button class="flex items-center gap-2">
+  <button class="flex items-center gap-2" @click="$emit('back')">
     <img :src="BackIcon" alt="Back" class="w-7 h-7" />
   </button>
   <div class="p-6">
     <h2 class="text-xl font-bold mb-4">Program Minggu (PM)</h2>
 
+    <!-- Loading -->
+    <div
+      v-if="jadwalStore.loading && jadwals.length === 0"
+      class="text-center py-6">
+      <p class="text-gray-500 animate-pulse">Memuat jadwal...</p>
+    </div>
+
     <!-- List Jadwal -->
-    <div v-for="(jadwal, index) in jadwals" :key="jadwal.kd_ijin" class="mb-3">
+    <div
+      v-else
+      v-for="(jadwal, index) in jadwals"
+      :key="jadwal.kd_ijin"
+      class="mb-3">
       <div
         class="flex justify-between items-center bg-white shadow rounded p-3">
         <!-- Keterangan Jadwal -->
         <div>
           <p class="font-semibold">{{ index + 1 }}. {{ jadwal.ijin_nama }}</p>
-          <p class="text-sm text-gray-600">({{ jadwal.kd_master_event }})</p>
+          <p class="text-sm text-gray-600">({{ event?.nama_event }})</p>
         </div>
 
         <!-- Tombol Aksi -->
@@ -23,22 +34,6 @@
             class="px-8 bg-gradient-to-r from-green-600 via-green-600 to-green-700 hover:brightness-110 active:brightness-90 hover:shadow-lg transition text-white text-xs font-semibold py-2 rounded-lg shadow mx-auto block"
             disabled>
             Terimakasih telah menyelesaikan CBT
-          </button>
-
-          <!-- Belum dibuka -->
-          <button
-            v-else-if="new Date() < new Date(jadwal.mulai)"
-            class="px-12 bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 text-white text-xs font-semibold py-2 rounded-lg shadow mx-auto block cursor-not-allowed"
-            disabled>
-            Belum dibuka
-          </button>
-
-          <!-- Sudah lewat -->
-          <button
-            v-else-if="new Date() > new Date(jadwal.selesai)"
-            class="px-12 bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white text-xs font-semibold py-2 rounded-lg shadow mx-auto block cursor-not-allowed"
-            disabled>
-            Jadwal sudah lewat
           </button>
 
           <!-- Bisa mulai -->
@@ -56,20 +51,28 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getJadwalJenis } from "../services/jadwalService";
+import { useJadwalStore } from "../stores/jadwalStore";
 import BackIcon from "../assets/icons/BackIcon.svg";
 
-const pesertaId = 293958;
-const kdMasterEvent = 2373;
+const emit = defineEmits(["back", "selectEvent"]);
+
+const props = defineProps({
+  pesertaId: { type: Number, required: true },
+  kdMasterEvent: { type: Number, required: true },
+  event: { type: Object, required: true },
+});
 
 const jadwals = ref([]);
+const jadwalStore = useJadwalStore();
 
 onMounted(async () => {
-  jadwals.value = await getJadwalJenis(pesertaId, kdMasterEvent);
+  jadwals.value = await jadwalStore.fetchJadwals(
+    props.pesertaId,
+    props.kdMasterEvent
+  );
 });
 
 const mulaiTes = (jadwal) => {
-  // logic pindah halaman ke pengerjaan soal
   console.log("Mulai tes:", jadwal);
 };
 </script>
