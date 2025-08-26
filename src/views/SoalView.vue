@@ -78,7 +78,7 @@ import FillBlankQuestion from "../components/soal/FillBlankQuestion.vue";
 
 const jenisId = 1445; // nanti bisa ambil dari route params
 const soalStore = useSoalStore();
-console.log(soalStore.cache);
+// console.log(soalStore.cache);
 
 const currentIndex = ref(0);
 const userAnswers = ref({});

@@ -18,6 +18,7 @@
               d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+        <div class="text-l font-semibold">Selamat Datang, {{ "Peserta" }}</div>
       </div>
 
       <button
