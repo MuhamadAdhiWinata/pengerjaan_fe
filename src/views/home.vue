@@ -1,36 +1,66 @@
 <template>
-  <KeepAlive>
-    <component
-      :is="currentView"
-      :peserta-id="pesertaId"
-      :kd-master-event="selectedEvent?.kd"
-      :event="selectedEvent"
-      @selectEvent="handleSelectEvent"
-      @back="handleBack" />
-  </KeepAlive>
+  <div class="home-container">
+    <KeepAlive>
+      <component
+        :is="currentView"
+        :peserta-id="pesertaId"
+        :kd-master-event="selectedEvent?.kd"
+        :event="selectedEvent"
+        :jadwal="selectedJadwal"
+        @back="handleBack"
+        @to-token="goToToken"
+        @select-event="handleSelectEvent"
+        @to-test="goToTest" />
+    </KeepAlive>
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useHomeStore } from "../stores/homeStore";
-import ListEvent from "./ListEvent.vue";
-import ListJadwal from "./ListJadwal.vue";
+
+// Components
+import ListEvent from "../components/home/ListEvent.vue";
+import ListJadwal from "../components/home/ListJadwal.vue";
+import Token from "../components/home/Token.vue";
+import TestPage from "../components/home/TestPage.vue";
 
 const pesertaId = 293958;
 const homeStore = useHomeStore();
+const { view, selectedEvent, selectedJadwal } = storeToRefs(homeStore);
 
-const currentView = computed(() => {
-  return homeStore.view === "ListEvent" ? ListEvent : ListJadwal;
-});
+const componentMap = {
+  ListEvent,
+  ListJadwal,
+  Token,
+  TestPage,
+};
 
-const selectedEvent = computed(() => homeStore.selectedEvent);
+const currentView = computed(() => componentMap[view.value] || ListEvent);
 
 const handleSelectEvent = (event) => {
-  homeStore.selectedEvent = event;
-  homeStore.view = "ListJadwal";
+  homeStore.setSelectedEvent(event);
+  homeStore.setView("ListJadwal");
 };
 
 const handleBack = () => {
-  homeStore.view = "ListEvent";
+  homeStore.navigateBack();
+};
+
+const goToToken = () => {
+  homeStore.setView("Token");
+};
+
+const goToTest = () => {
+  homeStore.setView("TestPage");
 };
 </script>
+
+<style scoped>
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+</style>
