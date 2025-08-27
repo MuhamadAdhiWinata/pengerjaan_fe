@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand: #2e79b7;
+}
+
+@utility btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition duration-200;
+}
+
+@utility btn-primary {
+  @apply bg-gradient-to-r from-[#2e79b7] via-[#2b6aa3] to-[#2b5a87] text-white font-bold rounded-lg transition duration-200 hover:brightness-110 hover:shadow-md active:brightness-90;
+}
+
+@utility btn-secondary {
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400;
+}
+
+@utility mid-container {
+  @apply bg-white rounded-lg border border-gray-200 shadow-sm;
+}
+
+@utility header-primary {
+  @apply bg-gradient-to-r from-[#2e79b7] via-[#2b6aa3] to-[#2b5a87] text-white text-center rounded-lg;
+}
