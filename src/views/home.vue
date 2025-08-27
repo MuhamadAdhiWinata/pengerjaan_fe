@@ -1,5 +1,5 @@
 <template>
-  <div class="home-container">
+  <div>
     <KeepAlive>
       <component
         :is="currentView"
@@ -57,10 +57,4 @@ const goToTest = () => {
 };
 </script>
 
-<style scoped>
-.home-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-</style>
+<style scoped></style>

@@ -5,11 +5,15 @@
 }
 
 @utility btn {
-  @apply px-4 py-2 rounded-lg font-semibold transition duration-200;
+  @apply text-xs font-semibold px-4 py-2 rounded-lg transition duration-200;
 }
 
 @utility btn-primary {
-  @apply bg-gradient-to-r from-[#2e79b7] via-[#2b6aa3] to-[#2b5a87] text-white font-bold rounded-lg transition duration-200 hover:brightness-110 hover:shadow-md active:brightness-90;
+  @apply btn bg-gradient-to-r from-[#2e79b7] via-[#2b6aa3] to-[#2b5a87] text-white hover:brightness-110 hover:shadow-md active:brightness-90 disabled:opacity-70 disabled:cursor-not-allowed;
+}
+
+@utility btn-green {
+  @apply btn bg-gradient-to-r from-green-600 to-green-700 text-white hover:brightness-110 hover:shadow-md active:brightness-90;
 }
 
 @utility btn-secondary {
@@ -22,4 +26,8 @@
 
 @utility header-primary {
   @apply bg-gradient-to-r from-[#2e79b7] via-[#2b6aa3] to-[#2b5a87] text-white text-center rounded-lg;
+}
+
+@utility card-primary {
+  @apply bg-sky-50 border border-sky-200 rounded-lg;
 }

@@ -1,51 +1,60 @@
 <template>
-  <!-- Back Button -->
-  <button class="back-button" @click="handleBack">
-    <img :src="BackIcon" alt="Back" class="back-icon" />
-  </button>
-  <div class="list-jadwal-container">
-    <div class="jadwal-content">
-      <h2 class="section-title">Program Minggu (PM)</h2>
+  <header class="header-primary flex items-center justify-between p-4 mb-4">
+    <!-- Back Button -->
+    <button
+      class="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition"
+      @click="handleBack">
+      <img :src="BackIcon" alt="Back" class="w-6 h-6" />
+    </button>
 
-      <!-- Loading State -->
-      <div v-if="loading && jadwals.length === 0" class="loading-state">
-        <p>Memuat jadwal...</p>
+    <!-- Title -->
+    <h1 class="text-xl font-bold">Program Minggu (PM)</h1>
+
+    <!-- Spacer / bisa isi action lain -->
+    <div class="w-6"></div>
+  </header>
+
+  <!-- Loading State -->
+  <div v-if="loading && jadwals.length === 0" class="text-center p-8">
+    <p>Memuat jadwal...</p>
+  </div>
+
+  <!-- Error State -->
+  <div v-else-if="error" class="text-center p-8 text-red-500">
+    <p>{{ error }}</p>
+    <button
+      @click="loadJadwals"
+      class="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600">
+      Coba Lagi
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div v-else-if="jadwals.length === 0" class="text-center p-8">
+    <p>Belum ada jadwal tersedia...</p>
+  </div>
+
+  <!-- Jadwal List -->
+  <div v-else class="grid gap-3">
+    <div
+      v-for="(jadwal, index) in jadwals"
+      :key="jadwal.kd_ijin"
+      class="flex justify-between items-center bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+      <div class="flex-1">
+        <p class="font-semibold mb-1">
+          {{ index + 1 }}. {{ jadwal.ijin_nama }}
+        </p>
+        <p class="text-sm text-gray-500">{{ event?.nama_event }}</p>
       </div>
 
-      <!-- Error State -->
-      <div v-else-if="error" class="error-state">
-        <p>{{ error }}</p>
-        <button @click="loadJadwals" class="retry-button">Coba Lagi</button>
-      </div>
+      <div class="mt-2">
+        <button v-if="jadwal.status_akm === 4" class="btn-green" disabled>
+          Terimakasih telah menyelesaikan CBT
+        </button>
 
-      <!-- Empty State -->
-      <div v-else-if="jadwals.length === 0" class="empty-state">
-        <p>Belum ada jadwal tersedia...</p>
-      </div>
-
-      <!-- Jadwal List -->
-      <div v-else class="jadwal-list">
-        <div
-          v-for="(jadwal, index) in jadwals"
-          :key="jadwal.kd_ijin"
-          class="jadwal-item">
-          <div class="jadwal-info">
-            <p class="jadwal-name">{{ index + 1 }}. {{ jadwal.ijin_nama }}</p>
-            <p class="event-name">{{ event?.nama_event }}</p>
-          </div>
-
-          <div class="jadwal-action">
-            <button
-              v-if="jadwal.status_akm === 4"
-              class="completed-button"
-              disabled>
-              Terimakasih telah menyelesaikan CBT
-            </button>
-            <button v-else @click="handleMulaiTes(jadwal)" class="start-button">
-              MULAI! (Durasi tes {{ jadwal.waktu }} menit)
-            </button>
-          </div>
-        </div>
+        <button v-else @click="handleMulaiTes(jadwal)" class="btn-primary">
+          Mulai! (Durasi tes {{ jadwal.waktu }} menit)
+        </button>
       </div>
     </div>
   </div>
@@ -101,119 +110,3 @@ const handleMulaiTes = (jadwal) => {
   emit("to-token");
 };
 </script>
-
-<style scoped>
-.list-jadwal-container {
-  padding: 0rem;
-}
-
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: #3b82f6;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.back-icon {
-  width: 1.75rem;
-  height: 1.75rem;
-}
-
-.jadwal-content {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.section-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.jadwal-list {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.jadwal-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.jadwal-info {
-  flex: 1;
-}
-
-.jadwal-name {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.event-name {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.jadwal-action {
-  margin-top: 0.5rem;
-}
-
-.completed-button {
-  background: linear-gradient(to right, #16a34a, #15803d);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  opacity: 0.9;
-}
-
-.start-button {
-  background: linear-gradient(to right, #2e79b7, #2b6aa3, #2b5a87);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-}
-
-.start-button:hover {
-  filter: brightness(110%);
-}
-
-.start-button:active {
-  filter: brightness(90%);
-}
-
-.loading-state,
-.error-state,
-.empty-state {
-  text-align: center;
-  padding: 2rem;
-}
-
-.error-state {
-  color: #ef4444;
-}
-
-.retry-button {
-  background: #3b82f6;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  margin-top: 0.5rem;
-}
-</style>
