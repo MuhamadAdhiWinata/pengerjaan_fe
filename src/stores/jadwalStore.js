@@ -1,3 +1,4 @@
+// stores/jadwalStore.js
 import { defineStore } from "pinia";
 import { getJadwalJenis } from "../services/jadwalService";
 
@@ -6,7 +7,13 @@ export const useJadwalStore = defineStore("jadwal", {
     jadwalsByKey: {},
     loading: false,
     error: null,
+    selectedJadwal: null,
   }),
+  getters: {
+    getJadwalsByKey: (state) => (key) => {
+      return state.jadwalsByKey[key] || [];
+    },
+  },
   actions: {
     async fetchJadwals(pesertaId, kdMasterEvent) {
       const key = `${pesertaId}-${kdMasterEvent}`;
@@ -23,12 +30,18 @@ export const useJadwalStore = defineStore("jadwal", {
         this.jadwalsByKey[key] = jadwals;
         return jadwals;
       } catch (err) {
-        console.error(err);
+        console.error("JadwalStore Error:", err);
         this.error = "Gagal memuat data jadwal.";
         return [];
       } finally {
         this.loading = false;
       }
+    },
+    setSelected(jadwal) {
+      this.selectedJadwal = jadwal;
+    },
+    clearCache() {
+      this.jadwalsByKey = {};
     },
   },
 });

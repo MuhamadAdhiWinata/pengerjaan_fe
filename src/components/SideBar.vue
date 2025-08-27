@@ -44,6 +44,6 @@ defineProps({
 // Daftar menu (tinggal tambah di sini)
 const menuItems = [
   { label: "Home", path: "/home", icon: HomeIcon },
-  { label: "Soal", path: "/soal", icon: PayIcon },
+  { label: "Page", path: "/page", icon: PayIcon },
 ];
 </script>

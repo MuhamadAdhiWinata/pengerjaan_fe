@@ -3,6 +3,7 @@ import Layout from "../components/Layout.vue";
 import LoginView from "../views/LoginView.vue";
 import SoalView from "../views/soalView.vue";
 import Home from "../views/home.vue";
+import PageSementara from "../components/PageSementara.vue";
 
 const routes = [
   {
@@ -11,13 +12,18 @@ const routes = [
     children: [
       {
         path: "home",
-        name: "home",
+        name: "Home",
         component: Home,
       },
       {
         path: "soal",
         name: "Soal",
         component: SoalView,
+      },
+      {
+        path: "page",
+        name: "page",
+        component: PageSementara,
       },
     ],
   },
