@@ -4,6 +4,14 @@
   --color-brand: #2e79b7;
 }
 
+@utility text-header {
+  @apply text-xl font-bold;
+}
+
+@utility text-middle {
+  @apply text-gray-700 font-medium;
+}
+
 @utility btn {
   @apply text-xs font-semibold px-4 py-2 rounded-lg transition duration-200;
 }

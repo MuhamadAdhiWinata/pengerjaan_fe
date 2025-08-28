@@ -76,18 +76,16 @@ import EssayQuestion from "../components/soal/EssayQuestion.vue";
 import CheckboxQuestion from "../components/soal/CheckboxQuestion.vue";
 import FillBlankQuestion from "../components/soal/FillBlankQuestion.vue";
 
-const jenisId = 1445; // nanti bisa ambil dari route params
+const jenisId = 1445;
 const soalStore = useSoalStore();
 // console.log(soalStore.cache);
 
 const currentIndex = ref(0);
 const userAnswers = ref({});
 
-// ambil dari cache via getter (reactive)
 const soal = computed(() => soalStore.getSoal(jenisId));
 
 onMounted(async () => {
-  // akan fetch hanya jika belum ada / TTL expired / force=true
   await soalStore.fetchSoal(jenisId);
 });
 

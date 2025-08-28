@@ -8,59 +8,65 @@
     </button>
 
     <!-- Title -->
-    <h1 class="text-xl font-bold">Masukkan Token Ujian</h1>
+    <h1 class="text-header">Masukkan Token Ujian</h1>
 
     <!-- Spacer / bisa isi action lain -->
     <div class="w-6"></div>
   </header>
+  <div class="flex items-center justify-center">
+    <div class="border border-sky-200 rounded-lg w-full max-w-md p-6 space-y-6">
+      <!-- Info Jadwal -->
+      <div class="card-primary p-5">
+        <h2 class="text-middle mb-4 text-center">Informasi Ujian</h2>
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span class="text-sm text-slate-500">Nama Soal</span>
+            <span class="text-middle">{{ jadwal.nama_soal }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-slate-500">Waktu Pengerjaan</span>
+            <span class="text-middle">{{ jadwal.waktu }} Menit</span>
+          </div>
+        </div>
+      </div>
 
-  <!-- Jadwal Info -->
-  <div class="card-primary p-5 mb-6">
-    <div class="flex justify-between mb-3">
-      <span class="text-sm text-slate-500">Nama Soal</span>
-      <span class="font-semibold text-slate-800">{{ jadwal.nama_soal }}</span>
-    </div>
-    <div class="flex justify-between">
-      <span class="text-sm text-slate-500">Waktu Pengerjaan</span>
-      <span class="font-semibold text-slate-800">{{ jadwal.waktu }} Menit</span>
+      <!-- Input Token -->
+      <div>
+        <label for="token-input" class="block text-middle mb-2">
+          Masukkan Token
+        </label>
+        <input
+          id="token-input"
+          v-model="token"
+          type="text"
+          placeholder="Contoh: AV2FKE"
+          class="w-full px-2 py-1 rounded-lg border border-sky-300 transition focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
+          :class="{ 'border-red-500': message && !success }"
+          @keyup.enter="submitToken" />
+
+        <!-- Pesan Validasi -->
+        <p
+          v-if="message"
+          class="mt-2 text-sm"
+          :class="success ? 'text-green-600' : 'text-red-500'">
+          {{ message }}
+        </p>
+      </div>
+
+      <!-- Tombol Submit -->
+      <button
+        @click="submitToken"
+        :disabled="loading || !token.trim()"
+        class="btn-primary w-full flex items-center justify-center gap-2 font-semibold px-6 py-3 mb-5">
+        <span v-if="loading" class="flex items-center gap-2">
+          <span
+            class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          Memverifikasi...
+        </span>
+        <span v-else>Submit</span>
+      </button>
     </div>
   </div>
-
-  <!-- Token Input -->
-  <div class="mb-6">
-    <label for="token-input" class="block font-medium text-gray-700 mb-2"
-      >Token</label
-    >
-    <input
-      id="token-input"
-      v-model="token"
-      type="text"
-      placeholder="Masukkan token di sini"
-      class="w-full px-4 py-3 rounded-lg border text-base transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-      :class="{ 'border-red-500': message && !success }"
-      @keyup.enter="submitToken" />
-
-    <!-- Validation Message -->
-    <p
-      v-if="message"
-      class="text-sm mt-2"
-      :class="success ? 'text-green-600' : 'text-red-500'">
-      {{ message }}
-    </p>
-  </div>
-
-  <!-- Submit Button -->
-  <button
-    @click="submitToken"
-    :disabled="loading || !token.trim()"
-    class="btn-primary w-full flex items-center justify-center gap-2 font-semibold px-6 py-3">
-    <span v-if="loading" class="flex items-center gap-2">
-      <span
-        class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-      Memverifikasi...
-    </span>
-    <span v-else>Submit Token</span>
-  </button>
 </template>
 
 <script setup>

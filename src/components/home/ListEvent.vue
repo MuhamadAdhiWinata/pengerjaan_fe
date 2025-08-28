@@ -2,7 +2,7 @@
   <!-- Header Section -->
   <header class="header-primary p-4 mb-4">
     <!-- Title -->
-    <h1 class="text-xl font-bold">Daftar CBT yang dapat dikerjakan</h1>
+    <h1 class="text-header">Daftar CBT yang dapat dikerjakan</h1>
 
     <!-- Spacer / bisa isi action lain -->
     <div class="w-6"></div>
@@ -34,7 +34,7 @@
       v-for="event in events"
       :key="event.kd"
       class="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-      <p class="text-gray-700 font-medium mb-3">Program Minggu (PM)</p>
+      <p class="text-middle mb-3">Program Minggu (PM)</p>
       <button
         class="btn-primary text-sm px-12 py-2 mx-auto block"
         @click="handleEventSelect(event)">

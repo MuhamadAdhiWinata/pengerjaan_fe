@@ -8,7 +8,7 @@
     </button>
 
     <!-- Title -->
-    <h1 class="text-xl font-bold">Program Minggu (PM)</h1>
+    <h1 class="text-header">Program Minggu (PM)</h1>
 
     <!-- Spacer / bisa isi action lain -->
     <div class="w-6"></div>
@@ -41,9 +41,7 @@
       :key="jadwal.kd_ijin"
       class="flex justify-between items-center bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
       <div class="flex-1">
-        <p class="font-semibold mb-1">
-          {{ index + 1 }}. {{ jadwal.ijin_nama }}
-        </p>
+        <p class="text-middle mb-1">{{ index + 1 }}. {{ jadwal.ijin_nama }}</p>
         <p class="text-sm text-gray-500">{{ event?.nama_event }}</p>
       </div>
 
