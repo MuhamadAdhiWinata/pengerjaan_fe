@@ -5,7 +5,7 @@
       <div
         v-for="(item, idx) in question.left_items"
         :key="'L' + idx"
-        class="p-3 border rounded-lg cursor-pointer select-none transition"
+        class="p-3 border rounded-lg cursor-pointer select-none transition text-question"
         :class="getLeftClass(idx)"
         @click="selectLeft(idx)"
         ref="leftRefs">
@@ -31,7 +31,7 @@
       <div
         v-for="(item, idx) in question.right_items"
         :key="'R' + idx"
-        class="p-3 border rounded-lg cursor-pointer select-none transition"
+        class="p-3 border rounded-lg cursor-pointer select-none transition text-question"
         :class="getRightClass(idx)"
         @click="selectRight(idx)"
         ref="rightRefs">
@@ -59,6 +59,13 @@ const rightRefs = ref([]);
 
 // warna pake tailwind
 const colorPalette = [
+  { bg: "bg-blue-200", border: "border-blue-500", stroke: "stroke-blue-500" },
+  { bg: "bg-red-200", border: "border-red-500", stroke: "stroke-red-500" },
+  {
+    bg: "bg-purple-200",
+    border: "border-purple-500",
+    stroke: "stroke-purple-500",
+  },
   {
     bg: "bg-green-200",
     border: "border-green-500",
@@ -68,13 +75,6 @@ const colorPalette = [
     bg: "bg-yellow-200",
     border: "border-yellow-500",
     stroke: "stroke-yellow-500",
-  },
-  { bg: "bg-red-200", border: "border-red-500", stroke: "stroke-red-500" },
-  { bg: "bg-blue-200", border: "border-blue-500", stroke: "stroke-blue-500" },
-  {
-    bg: "bg-purple-200",
-    border: "border-purple-500",
-    stroke: "stroke-purple-500",
   },
 ];
 

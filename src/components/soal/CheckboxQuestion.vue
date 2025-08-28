@@ -3,16 +3,15 @@
     <label
       v-for="(opt, i) in question.options"
       :key="i"
-      class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition hover:bg-gray-50"
-      :class="{ 'bg-blue-50 border-blue-400': localValue.includes(i) }">
+      class="flex items-center gap-3 rounded-lg">
       <!-- Checkbox -->
       <input
         type="checkbox"
-        class="w-5 h-5 cursor-pointer accent-blue-500"
+        class="w-5 h-5 cursor-pointer accent-[#286ca4]"
         :value="i"
         v-model="localValue" />
       <!-- Label -->
-      <span class="flex-1">{{ opt }}</span>
+      <span class="flex-1 text-question">{{ opt }}</span>
     </label>
   </div>
 </template>

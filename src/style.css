@@ -3,6 +3,9 @@
 @theme {
   --color-brand: #2e79b7;
 }
+@utility bg-primary {
+  @apply bg-[#286ca4];
+}
 
 @utility text-header {
   @apply text-xl font-bold;
@@ -10,6 +13,10 @@
 
 @utility text-middle {
   @apply text-gray-700 font-medium;
+}
+
+@utility text-question {
+  @apply font-medium text-gray-700 text-sm;
 }
 
 @utility btn {
@@ -21,7 +28,7 @@
 }
 
 @utility btn-green {
-  @apply btn bg-gradient-to-r from-green-600 to-green-700 text-white hover:brightness-110 hover:shadow-md active:brightness-90;
+  @apply btn bg-gradient-to-r from-green-700 to-green-900 text-white hover:brightness-110 hover:shadow-md active:brightness-90;
 }
 
 @utility btn-secondary {
@@ -38,4 +45,8 @@
 
 @utility card-primary {
   @apply bg-sky-50 border border-sky-200 rounded-lg;
+}
+
+@utility nav-header {
+  @apply bg-gradient-to-r from-[#2E79B7] via-[#2B6AA3] to-[#2B5A87] shadow text-white font-semibold;
 }

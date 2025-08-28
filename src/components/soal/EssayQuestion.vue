@@ -3,7 +3,7 @@
   <div>
     <textarea
       v-model="localValue"
-      class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-400"
+      class="w-full border border-b-brand p-3 rounded-lg focus:ring-2 focus:ring-blue-400 text-question"
       rows="5"
       placeholder="Tulis jawabanmu di sini..."></textarea>
   </div>
