@@ -1,16 +1,17 @@
 <template>
-  <div>
+  <div class="space-y-3">
     <div
       v-for="(opt, i) in question.options"
       :key="i"
-      class="p-2 border rounded mb-2 cursor-pointer transition hover:bg-gray-100 flex items-center gap-2"
-      :class="{ 'bg-blue-100 border-blue-400': modelValue === i }"
+      class="flex items-center gap-3 p-1 rounded-lg cursor-pointer transition duration-200"
       @click="$emit('update:modelValue', i)">
       <!-- Label A, B, C, D -->
-      <span class="font-bold w-6 text-center">
-        {{ String.fromCharCode(65 + i) }}.
+      <span
+        class="flex items-center border justify-center w-6 h-6 rounded-full font-semibold text-gray-700"
+        :class="modelValue === i ? 'bg-primary text-white' : 'bg-white'">
+        {{ String.fromCharCode(65 + i) }}
       </span>
-      <span>{{ opt }}</span>
+      <span class="text-question">{{ opt }}</span>
     </div>
   </div>
 </template>

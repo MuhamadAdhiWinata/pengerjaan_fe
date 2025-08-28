@@ -9,7 +9,7 @@ export const useHomeStore = defineStore("home", {
   }),
   actions: {
     setView(view) {
-      if (["ListEvent", "ListJadwal", "Token", "TestPage"].includes(view)) {
+      if (["ListEvent", "ListJadwal", "Token"].includes(view)) {
         this.view = view;
       }
     },
@@ -21,7 +21,6 @@ export const useHomeStore = defineStore("home", {
     },
     navigateBack() {
       const navigationFlow = {
-        TestPage: "Token",
         Token: "ListJadwal",
         ListJadwal: "ListEvent",
         ListEvent: "ListEvent",

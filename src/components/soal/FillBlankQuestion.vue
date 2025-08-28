@@ -8,7 +8,7 @@
             type="text"
             v-model="local[iBlankIndex[i]]"
             :placeholder="p.placeholder || '...'"
-            class="border-b border-gray-400 focus:border-blue-500 focus:outline-none px-1" />
+            class="border-b border-gray-400 focus:border-blue-500 focus:outline-none px-1 text-question" />
         </template>
         <!-- TEXT -->
         <span v-else>{{ p.v }}</span>

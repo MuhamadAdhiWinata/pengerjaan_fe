@@ -8,10 +8,13 @@
     </button>
 
     <!-- Title -->
-    <h1 class="text-header">Masukkan Token Ujian</h1>
+    <h1 class="text-header">
+      {{ isVerified ? "Mulai Ujian" : "Masukkan Token Ujian" }}
+    </h1>
 
     <div class="w-6"></div>
   </header>
+
   <div class="flex items-center justify-center">
     <div class="border border-sky-200 rounded-lg w-full max-w-md p-6 space-y-6">
       <!-- Info Jadwal -->
@@ -37,10 +40,14 @@
         <input
           id="token-input"
           v-model="token"
-          type="text"
+          :type="isVerified ? 'password' : 'text'"
           placeholder="Contoh: AV2FKE"
           class="w-full px-2 py-1 rounded-lg border border-sky-300 transition focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
-          :class="{ 'border-red-500': message && !success }"
+          :class="{
+            'border-red-500': message && !success,
+            'bg-gray-100 cursor-not-allowed text-gray-500': isVerified,
+          }"
+          :disabled="isVerified"
           @keyup.enter="submitToken" />
 
         <!-- Pesan Validasi -->
@@ -52,17 +59,18 @@
         </p>
       </div>
 
-      <!-- Tombol Submit -->
+      <!-- Tombol Submit / Mulai -->
       <button
-        @click="submitToken"
-        :disabled="loading || !token.trim()"
-        class="btn-primary w-full flex items-center justify-center gap-2 font-semibold px-6 py-3 mb-5">
-        <span v-if="loading" class="flex items-center gap-2">
+        @click="isVerified ? emit('to-test') : submitToken()"
+        :disabled="loading || (!token.trim() && !isVerified)"
+        class="w-full flex items-center justify-center gap-2 font-semibold px-6 py-3 mb-5 rounded-lg transition"
+        :class="isVerified ? 'btn-green' : 'btn-primary'">
+        <span v-if="loading && !isVerified" class="flex items-center gap-2">
           <span
             class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           Memverifikasi...
         </span>
-        <span v-else>Submit</span>
+        <span v-else>{{ isVerified ? "Mulai" : "Submit" }}</span>
       </button>
     </div>
   </div>
@@ -84,8 +92,9 @@ const { loading } = storeToRefs(tokenStore);
 const token = ref("");
 const message = ref("");
 const success = ref(false);
+const isVerified = ref(false);
 
-// Get jadwal from home store
+// Get jadwal dari home store
 const jadwal = ref({
   kd_jenis: homeStore.selectedJadwal?.kd_jenis || 1445,
   nama_soal: homeStore.selectedJadwal?.ijin_nama || "AKM",
@@ -112,10 +121,7 @@ const submitToken = async () => {
   success.value = result.success;
 
   if (result.success) {
-    // Navigate to test page on success
-    setTimeout(() => {
-      emit("to-test");
-    }, 1000);
+    isVerified.value = true; // tombol berubah jadi "Mulai"
   }
 };
 </script>

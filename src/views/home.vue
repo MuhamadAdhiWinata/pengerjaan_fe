@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useHomeStore } from "../stores/homeStore";
@@ -25,6 +26,8 @@ import ListEvent from "../components/home/ListEvent.vue";
 import ListJadwal from "../components/home/ListJadwal.vue";
 import Token from "../components/home/Token.vue";
 import TestPage from "../components/home/TestPage.vue";
+
+const router = useRouter();
 
 const pesertaId = 293958;
 const homeStore = useHomeStore();
@@ -52,8 +55,16 @@ const goToToken = () => {
   homeStore.setView("Token");
 };
 
+// const goToTest = () => {
+//   homeStore.setView("TestPage");
+// };
+
 const goToTest = () => {
-  homeStore.setView("TestPage");
+  // Simpan data jadwal dulu kalau perlu
+  // homeStore.setSelectedJadwal(someJadwal);
+
+  // Pindah ke route /soal
+  router.push("/soal");
 };
 </script>
 

@@ -4,6 +4,7 @@ import LoginView from "../views/LoginView.vue";
 import SoalView from "../views/soalView.vue";
 import Home from "../views/home.vue";
 import PageSementara from "../components/PageSementara.vue";
+import DummySoalVue from "../views/DummySoal.Vue";
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
     path: "/soal",
     name: "Soal",
     component: SoalView,
+  },
+  {
+    path: "/dummy",
+    name: "dummy",
+    component: DummySoalVue,
   },
   {
     path: "/login",
