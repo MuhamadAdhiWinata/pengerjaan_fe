@@ -16,16 +16,16 @@ const routes = [
         component: Home,
       },
       {
-        path: "soal",
-        name: "Soal",
-        component: SoalView,
-      },
-      {
         path: "page",
         name: "page",
         component: PageSementara,
       },
     ],
+  },
+  {
+    path: "/soal",
+    name: "Soal",
+    component: SoalView,
   },
   {
     path: "/login",

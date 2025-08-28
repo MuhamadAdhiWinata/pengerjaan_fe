@@ -10,7 +10,6 @@
     <!-- Title -->
     <h1 class="text-header">Masukkan Token Ujian</h1>
 
-    <!-- Spacer / bisa isi action lain -->
     <div class="w-6"></div>
   </header>
   <div class="flex items-center justify-center">

@@ -35,25 +35,33 @@
   </div>
 
   <!-- Jadwal List -->
-  <div v-else class="grid gap-3">
-    <div
-      v-for="(jadwal, index) in jadwals"
-      :key="jadwal.kd_ijin"
-      class="flex justify-between items-center bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-      <div class="flex-1">
-        <p class="text-middle mb-1">{{ index + 1 }}. {{ jadwal.ijin_nama }}</p>
-        <p class="text-sm text-gray-500">{{ event?.nama_event }}</p>
-      </div>
+  <div
+    v-for="(jadwal, index) in jadwals"
+    :key="jadwal.kd_ijin"
+    class="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-white rounded-lg p-4 border border-gray-200 shadow-sm gap-3 mb-2">
+    <!-- Info -->
+    <div class="flex-1">
+      <p class="text-base font-medium mb-1">
+        {{ index + 1 }}. {{ jadwal.ijin_nama }}
+      </p>
+      <p class="text-sm text-gray-500">{{ event?.nama_event }}</p>
+    </div>
 
-      <div class="mt-2">
-        <button v-if="jadwal.status_akm === 4" class="btn-green" disabled>
-          Terimakasih telah menyelesaikan CBT
-        </button>
+    <!-- Action -->
+    <div class="mt-2 sm:mt-0 sm:ml-4">
+      <button
+        v-if="jadwal.status_akm === 4"
+        class="btn-green w-full sm:w-auto"
+        disabled>
+        Terimakasih telah menyelesaikan CBT
+      </button>
 
-        <button v-else @click="handleMulaiTes(jadwal)" class="btn-primary">
-          Mulai! (Durasi tes {{ jadwal.waktu }} menit)
-        </button>
-      </div>
+      <button
+        v-else
+        @click="handleMulaiTes(jadwal)"
+        class="btn-primary w-full sm:w-auto">
+        Mulai! (Durasi tes {{ jadwal.waktu }} menit)
+      </button>
     </div>
   </div>
 </template>
