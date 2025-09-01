@@ -61,7 +61,7 @@
 
       <!-- Tombol Submit / Mulai -->
       <button
-        @click="isVerified ? emit('to-test') : submitToken()"
+        @click="isVerified ? startTest() : submitToken()"
         :disabled="loading || (!token.trim() && !isVerified)"
         class="w-full flex items-center justify-center gap-2 font-semibold px-6 py-3 mb-5 rounded-lg transition"
         :class="isVerified ? 'btn-green' : 'btn-primary'">
@@ -82,6 +82,14 @@ import { storeToRefs } from "pinia";
 import { useTokenStore } from "../../stores/tokenStore";
 import { useHomeStore } from "../../stores/homeStore";
 import BackIcon from "../../assets/icons/BackIcon.svg";
+import Swal from "sweetalert2";
+
+const props = defineProps({
+  pesertaId: Number,
+  kdMasterEvent: Number,
+  event: Object,
+  jadwal: Object,
+});
 
 const emit = defineEmits(["back", "to-test"]);
 
@@ -96,9 +104,9 @@ const isVerified = ref(false);
 
 // Get jadwal dari home store
 const jadwal = ref({
-  kd_jenis: homeStore.selectedJadwal?.kd_jenis || 1445,
-  nama_soal: homeStore.selectedJadwal?.ijin_nama || "AKM",
-  waktu: homeStore.selectedJadwal?.waktu || 90,
+  kd_jenis: homeStore.selectedJadwal?.kd_jenis,
+  nama_soal: homeStore.selectedJadwal?.ijin_nama,
+  waktu: homeStore.selectedJadwal?.waktu,
 });
 
 const handleBack = () => {
@@ -124,4 +132,21 @@ const submitToken = async () => {
     isVerified.value = true; // tombol berubah jadi "Mulai"
   }
 };
+
+async function startTest() {
+  const result = await Swal.fire({
+    title: "Siap ikut ujian?",
+    text: "Pastikan kamu sudah siap sebelum mulai.",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Mulai",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#2e79b7",
+    cancelButtonColor: "#d33",
+    background: "#f9fafb",
+  });
+
+  if (result.isConfirmed) {
+    emit("to-test");
+  }
+}
 </script>
