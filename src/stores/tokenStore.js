@@ -2,9 +2,19 @@
 import { defineStore } from "pinia";
 import { validateJenisKode } from "../services/tokenService";
 
+const safeParse = (v) => {
+  if (typeof v !== "string") return v;
+  try {
+    return JSON.parse(v);
+  } catch {
+    return v;
+  }
+};
+
 export const useTokenStore = defineStore("token", {
   state: () => ({
     tokensByKey: {},
+    activeResult: null, // 🔑 hasil terakhir disimpan di sini
     loading: false,
     error: null,
   }),
@@ -13,6 +23,7 @@ export const useTokenStore = defineStore("token", {
       const key = `${kdJenis}-${kode}`;
 
       if (this.tokensByKey[key]) {
+        this.activeResult = this.tokensByKey[key];
         return this.tokensByKey[key];
       }
 
@@ -21,8 +32,21 @@ export const useTokenStore = defineStore("token", {
 
       try {
         const result = await validateJenisKode(kdJenis, kode);
-        this.tokensByKey[key] = result;
-        return result;
+
+        // ⬇️ perbaikan di sini
+        const rawData = result?.data || {};
+
+        const parsedData = {
+          ...rawData,
+          soal_generate: safeParse(rawData.soal_generate),
+        };
+
+        const finalResult = { ...result, data: parsedData };
+
+        this.tokensByKey[key] = finalResult;
+        this.activeResult = finalResult;
+        console.log("✅ Final Result:", finalResult); // debug
+        return finalResult;
       } catch (err) {
         console.error("TokenStore Error:", err);
         this.error = "Gagal memverifikasi token.";
@@ -33,6 +57,7 @@ export const useTokenStore = defineStore("token", {
     },
     clearCache() {
       this.tokensByKey = {};
+      this.activeResult = null;
     },
   },
 });

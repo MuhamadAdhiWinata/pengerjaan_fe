@@ -138,7 +138,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useSoalStore } from "../stores/soalStore";
+import { useTokenStore } from "../stores/tokenStore";
 import { getAnswerStatus, getAnswerClass } from "../helpers/soalHelpers";
 
 import MatchingQuestion from "../components/soal/MatchingQuestion.vue";
@@ -149,19 +149,14 @@ import FillBlankQuestion from "../components/soal/FillBlankQuestion.vue";
 import HeaderSoal from "../components/soal/HeaderSoal.vue";
 import ReviewModal from "../components/soal/ReviewModal.vue";
 
-const jenisId = 1445;
-const soalStore = useSoalStore();
-
 const currentIndex = ref(0);
 const userAnswers = ref({});
 const raguRagu = ref({});
 const showReview = ref(false);
 
-const soal = computed(() => soalStore.getSoal(jenisId));
+const tokenStore = useTokenStore();
 
-onMounted(async () => {
-  await soalStore.fetchSoal(jenisId);
-});
+const soal = computed(() => tokenStore.activeResult?.data || null);
 
 const currentQuestion = computed(() => {
   if (!soal.value) return null;

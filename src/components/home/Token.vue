@@ -74,6 +74,7 @@
       </button>
     </div>
   </div>
+  <!-- <pre>{{ tokenStore.activeResult?.data?.soal_generate }}</pre> -->
 </template>
 
 <script setup>
@@ -146,6 +147,8 @@ async function startTest() {
   });
 
   if (result.isConfirmed) {
+    // data token terakhir sekarang ada di tokenStore.activeResult
+    // tinggal terusin ke route tujuan
     emit("to-test");
   }
 }
