@@ -24,7 +24,6 @@
         <button
           class="hidden lg:flex p-2 rounded hover:bg-white/10 transition"
           @click="$emit('toggleCollapse')">
-          <!-- Kalau collapse = true → Chevron Right -->
           <svg
             v-if="sidebarCollapse"
             class="w-6 h-6"
@@ -37,8 +36,6 @@
               stroke-linejoin="round"
               d="M9 5l7 7-7 7" />
           </svg>
-
-          <!-- Kalau collapse = false → Chevron Left -->
           <svg
             v-else
             class="w-6 h-6"
@@ -53,28 +50,59 @@
           </svg>
         </button>
 
-        <div class="text-l font-semibold">Selamat Datang, {{ "Peserta" }}</div>
+        <div class="text-l font-semibold">
+          Selamat Datang, {{ user?.nama || "Peserta" }}
+        </div>
       </div>
 
       <button
         class="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-[#c62828] shadow-md transition"
-        @click="logout">
-        Logout
+        @click="handleLogout"
+        :disabled="loading">
+        <span v-if="loading">...</span>
+        <span v-else>Logout</span>
       </button>
     </div>
   </header>
+  <div
+    v-if="loading"
+    class="fixed inset-0 flex items-center justify-center bg-black/40 z-70">
+    <div class="flex flex-col items-center space-y-3">
+      <!-- Spinner -->
+      <div
+        class="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-white text-lg">Logging out...</span>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { logout, fetchMe } from "../services/authServices";
 
 defineProps({
-  sidebarCollapse: Boolean, // dapet dari parent Layout.vue
+  sidebarCollapse: Boolean, // dari Layout.vue
 });
 
 const router = useRouter();
+const loading = ref(false);
+const user = ref(null);
 
-const logout = () => {
-  router.push("/login");
+// Ambil data peserta saat component mount
+onMounted(async () => {
+  user.value = await fetchMe();
+});
+
+const handleLogout = async () => {
+  loading.value = true;
+  try {
+    await logout();
+  } catch (e) {
+    console.error("Logout error:", e);
+  } finally {
+    loading.value = false;
+    router.push("/login");
+  }
 };
 </script>

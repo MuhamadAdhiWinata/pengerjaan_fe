@@ -54,9 +54,6 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  kdMasterEvent: Number,
-  event: Object,
-  jadwal: Object,
 });
 
 const emit = defineEmits(["select-event"]);

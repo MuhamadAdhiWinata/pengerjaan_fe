@@ -20,6 +20,7 @@ import { useRouter } from "vue-router";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useHomeStore } from "../stores/homeStore";
+import { getUser } from "../services/authServices"; // ambil user dari localStorage
 
 // Components
 import ListEvent from "../components/home/ListEvent.vue";
@@ -28,10 +29,11 @@ import Token from "../components/home/Token.vue";
 import TestPage from "../components/home/TestPage.vue";
 
 const router = useRouter();
-
-const pesertaId = 293958;
 const homeStore = useHomeStore();
 const { view, selectedEvent, selectedJadwal } = storeToRefs(homeStore);
+
+const user = getUser(); // Ambil user dari auth
+const pesertaId = user?.kd; // gunakan kd peserta sebagai ID
 
 const componentMap = {
   ListEvent,
@@ -55,15 +57,7 @@ const goToToken = () => {
   homeStore.setView("Token");
 };
 
-// const goToTest = () => {
-//   homeStore.setView("TestPage");
-// };
-
 const goToTest = () => {
-  // Simpan data jadwal dulu kalau perlu
-  // homeStore.setSelectedJadwal(someJadwal);
-
-  // Pindah ke route /soal
   router.push("/soal");
 };
 </script>
