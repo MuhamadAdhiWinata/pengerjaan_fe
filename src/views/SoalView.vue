@@ -5,23 +5,36 @@
     <div v-if="soal" class="max-w-4xl mx-auto px-6 py-8">
       <!-- Progress & Nomor Soal -->
       <div
-        class="flex items-center justify-between bg-white shadow-sm rounded-xl px-6 py-4 mb-6 border border-gray-100">
-        <p class="text-gray-600 font-semibold tracking-wide">
-          Soal
-          <span class="text-brand">{{ currentIndex + 1 }}</span> /
+        class="flex items-center justify-between bg-white shadow-md rounded-xl px-4 md:px-6 py-3 mb-6 border border-gray-200 flex-wrap gap-3">
+        <!-- Progress soal -->
+        <p
+          class="text-gray-700 font-semibold tracking-wide text-sm md:text-base">
+          Soal <span class="text-brand">{{ currentIndex + 1 }}</span> /
           {{ soal.soal_generate.questions.length }}
         </p>
-        <button
-          class="btn-primary font-semibold text-sm inline-flex items-center justify-center px-2 py-1"
-          @click="showReview = true">
-          progress
-        </button>
+
+        <!-- Timer + Button wrapper -->
+        <div class="flex items-center gap-3">
+          <!-- Timer -->
+          <div
+            class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 shadow-sm text-sm font-medium">
+            <TimeIcon class="w-4 h-4 text-gray-600" />
+            <span class="hidden sm:inline text-gray-600">Sisa waktu :</span>
+            <span class="text-red-500 font-bold">08.00</span>
+          </div>
+          <!-- Button daftar soal -->
+          <button
+            class="btn-primary px-3 py-2 shadow-md flex items-center gap-1"
+            @click="showReview = true">
+            <DraftIcon class="w-4 h-4" />
+            <span>DAFTAR SOAL</span>
+          </button>
+        </div>
       </div>
 
       <!-- Soal -->
       <div class="mid-container p-6 mb-8">
         <p class="text-questions mb-4">{{ currentQuestion.question }}</p>
-
         <!-- Jenis Soal -->
         <MultipleChoiceQuestion
           v-if="currentQuestion.type === 'multiple_choice'"
@@ -45,7 +58,7 @@
           v-model="userAnswers[currentQuestion.id]" />
       </div>
 
-      <!-- Navigation + Ragu-ragu -->
+      <!-- Navigation -->
       <div class="flex flex-wrap items-center justify-between mt-6 gap-2">
         <!-- Sebelumnya -->
         <button
@@ -149,13 +162,18 @@ import FillBlankQuestion from "../components/soal/FillBlankQuestion.vue";
 import HeaderSoal from "../components/soal/HeaderSoal.vue";
 import ReviewModal from "../components/soal/ReviewModal.vue";
 
+import DraftIcon from "../assets/icons/DraftIcon.svg";
+import TimeIcon from "../assets/icons/TimeIcon.svg";
+
 const currentIndex = ref(0);
 const userAnswers = ref({});
 const raguRagu = ref({});
 const showReview = ref(false);
 
 const tokenStore = useTokenStore();
-
+onMounted(() => {
+  tokenStore.loadFromStorage();
+});
 const soal = computed(() => tokenStore.activeResult?.data || null);
 
 const currentQuestion = computed(() => {

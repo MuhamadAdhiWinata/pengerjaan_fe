@@ -36,10 +36,11 @@
         class="flex items-center px-4 py-2 text-white/90 hover:text-white hover:bg-white/10 transition rounded-lg mx-2"
         :class="sidebarCollapse ? 'lg:justify-center' : ''"
         active-class="bg-white/20 text-white font-semibold">
-        <img
-          :src="item.icon"
-          class="w-5 h-5"
+        <component
+          :is="item.icon"
+          class="w-5 h-5 fill-current"
           :class="sidebarCollapse ? 'lg:mr-0' : 'mr-3'" />
+
         <span
           :class="
             sidebarCollapse

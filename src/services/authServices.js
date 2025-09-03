@@ -1,64 +1,67 @@
 import api from "./api";
+import { useUserStore } from "../stores/userStore";
 
 export async function login(username, sandi) {
   const response = await api.post("/auth/login", { username, sandi });
+  const { token } = response.data;
+
+  saveAuth(token);
+
+  // ambil user info dan simpan ke store
+  const userStore = useUserStore();
+  const user = await fetchMe();
+  if (user) userStore.setUser(user);
+
   return response.data;
 }
 
-export function saveAuth(token, user) {
+export function saveAuth(token) {
   localStorage.setItem("token", token);
-  localStorage.setItem("user", JSON.stringify(user));
 }
 
 export function getToken() {
   return localStorage.getItem("token");
 }
 
-export function getUser() {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
-}
-
 export function clearAuth() {
   localStorage.removeItem("token");
-  localStorage.removeItem("user");
 }
 
-export const logout = async () => {
-  try {
-    const token = getToken();
-    await api.post(
-      "/auth/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    clearAuth();
-  } catch (err) {
-    clearAuth();
-    throw err;
-  }
-};
+export async function logout() {
+  const userStore = useUserStore();
 
-// ==========================
-// Fungsi baru untuk /auth/me
-export const fetchMe = async () => {
+  try {
+    await api.post("/auth/logout");
+  } catch (_) {
+    // bisa diabaikan kalau server gak respon
+  } finally {
+    clearAuth();
+    userStore.clearUser();
+  }
+}
+
+export async function fetchMe() {
   try {
     const token = getToken();
-    if (!token) return null; // Belum login
-    const res = await api.get("/auth/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    // Update localStorage user biar selalu sync
-    saveAuth(token, res.data.user);
+    if (!token) return null;
+
+    const res = await api.get("/auth/me");
     return res.data.user;
   } catch (err) {
     clearAuth();
     return null;
   }
-};
+}
+
+// 🔹 inisialisasi user saat app di-refresh
+export async function initUser() {
+  const userStore = useUserStore();
+  if (!getToken()) return;
+
+  const user = await fetchMe();
+  if (user) {
+    userStore.setUser(user);
+  } else {
+    userStore.clearUser();
+  }
+}

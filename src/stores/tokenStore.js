@@ -14,7 +14,7 @@ const safeParse = (v) => {
 export const useTokenStore = defineStore("token", {
   state: () => ({
     tokensByKey: {},
-    activeResult: null, // 🔑 hasil terakhir disimpan di sini
+    activeResult: null,
     loading: false,
     error: null,
   }),
@@ -22,6 +22,7 @@ export const useTokenStore = defineStore("token", {
     async verifyToken(kdJenis, kode) {
       const key = `${kdJenis}-${kode}`;
 
+      // kalau sudah ada di cache store
       if (this.tokensByKey[key]) {
         this.activeResult = this.tokensByKey[key];
         return this.tokensByKey[key];
@@ -32,8 +33,6 @@ export const useTokenStore = defineStore("token", {
 
       try {
         const result = await validateJenisKode(kdJenis, kode);
-
-        // ⬇️ perbaikan di sini
         const rawData = result?.data || {};
 
         const parsedData = {
@@ -45,7 +44,10 @@ export const useTokenStore = defineStore("token", {
 
         this.tokensByKey[key] = finalResult;
         this.activeResult = finalResult;
-        console.log("✅ Final Result:", finalResult); // debug
+
+        // 🔹 simpan ke localStorage
+        localStorage.setItem("soalResult", JSON.stringify(finalResult));
+
         return finalResult;
       } catch (err) {
         console.error("TokenStore Error:", err);
@@ -55,9 +57,24 @@ export const useTokenStore = defineStore("token", {
         this.loading = false;
       }
     },
+
+    // 🔹 load ulang dari localStorage saat refresh
+    loadFromStorage() {
+      const saved = localStorage.getItem("soalResult");
+      if (saved) {
+        try {
+          this.activeResult = JSON.parse(saved);
+        } catch (err) {
+          console.error("❌ Gagal parse soalResult:", err);
+          this.activeResult = null;
+        }
+      }
+    },
+
     clearCache() {
       this.tokensByKey = {};
       this.activeResult = null;
+      localStorage.removeItem("soalResult");
     },
   },
 });

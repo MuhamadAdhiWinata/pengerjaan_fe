@@ -1,10 +1,8 @@
 <template>
   <header class="header-primary flex items-center justify-between p-4 mb-4">
     <!-- Back Button -->
-    <button
-      class="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition"
-      @click="handleBack">
-      <img :src="BackIcon" alt="Back" class="w-6 h-6" />
+    <button class="flex items-center gap-2 transition" @click="handleBack">
+      <BackIcon class="w-6 h-6" />
     </button>
 
     <!-- Title -->

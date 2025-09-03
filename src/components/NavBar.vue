@@ -77,9 +77,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { logout, fetchMe } from "../services/authServices";
+import { logout } from "../services/authServices";
+import { useUserStore } from "../stores/userStore";
 
 defineProps({
   sidebarCollapse: Boolean, // dari Layout.vue
@@ -87,12 +88,9 @@ defineProps({
 
 const router = useRouter();
 const loading = ref(false);
-const user = ref(null);
+const userStore = useUserStore();
 
-// Ambil data peserta saat component mount
-onMounted(async () => {
-  user.value = await fetchMe();
-});
+const user = computed(() => userStore.user);
 
 const handleLogout = async () => {
   loading.value = true;
