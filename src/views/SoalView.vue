@@ -2,11 +2,10 @@
   <div class="bg-slate-300 min-h-screen">
     <HeaderSoal />
 
-    <div v-if="soal" class="max-w-4xl mx-auto px-6 py-8">
+    <div v-if="soal && currentQuestion" class="max-w-4xl mx-auto px-6 py-8">
       <!-- Progress & Nomor Soal -->
       <div
         class="flex items-center justify-between bg-white shadow-md rounded-xl px-4 md:px-6 py-3 mb-6 border border-gray-200 flex-wrap gap-3">
-        <!-- Progress soal -->
         <p
           class="text-gray-700 font-semibold tracking-wide text-sm md:text-base">
           Soal <span class="text-brand">{{ currentIndex + 1 }}</span> /
@@ -15,14 +14,12 @@
 
         <!-- Timer + Button wrapper -->
         <div class="flex items-center gap-3">
-          <!-- Timer -->
           <div
             class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 shadow-sm text-sm font-medium">
             <TimeIcon class="w-4 h-4 text-gray-600" />
             <span class="hidden sm:inline text-gray-600">Sisa waktu :</span>
-            <span class="text-red-500 font-bold">08.00</span>
+            <span class="text-red-500 font-bold">{{ formattedTime }}</span>
           </div>
-          <!-- Button daftar soal -->
           <button
             class="btn-primary px-3 py-2 shadow-md flex items-center gap-1"
             @click="showReview = true">
@@ -35,7 +32,7 @@
       <!-- Soal -->
       <div class="mid-container p-6 mb-8">
         <p class="text-questions mb-4">{{ currentQuestion.question }}</p>
-        <!-- Jenis Soal -->
+
         <MultipleChoiceQuestion
           v-if="currentQuestion.type === 'multiple_choice'"
           :question="currentQuestion"
@@ -60,7 +57,6 @@
 
       <!-- Navigation -->
       <div class="flex flex-wrap items-center justify-between mt-6 gap-2">
-        <!-- Sebelumnya -->
         <button
           class="btn btn-secondary flex items-center gap-2 font-bold text-xs sm:text-sm px-3 py-2 sm:px-5 sm:py-3"
           :disabled="currentIndex === 0"
@@ -68,7 +64,6 @@
           Sebelumnya
         </button>
 
-        <!-- Ragu-ragu -->
         <button
           class="btn bg-yellow-100 flex items-center gap-1 sm:gap-2 font-bold border rounded-lg transition text-xs sm:text-sm px-2 py-1.5 sm:px-4 sm:py-2"
           :class="
@@ -85,7 +80,6 @@
           Ragu-ragu
         </button>
 
-        <!-- Selanjutnya -->
         <button
           class="btn btn-primary flex items-center gap-2 font-bold text-xs sm:text-sm px-3 py-2 sm:px-5 sm:py-3"
           @click="currentIndex++"
@@ -96,7 +90,7 @@
     </div>
 
     <!-- Review Modal -->
-    <ReviewModal v-model="showReview">
+    <ReviewModal v-model="showReview" v-if="soal">
       <template #title>Pengerjaan</template>
       <div class="px-5 py-2 border-b">
         <div class="flex items-center justify-between mb-2">
@@ -150,8 +144,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onBeforeUnmount } from "vue";
+import { storeToRefs } from "pinia";
 import { useTokenStore } from "../stores/tokenStore";
+import { useStatusStore } from "../stores/statusStore";
 import { getAnswerStatus, getAnswerClass } from "../helpers/soalHelpers";
 
 import MatchingQuestion from "../components/soal/MatchingQuestion.vue";
@@ -170,15 +166,31 @@ const userAnswers = ref({});
 const raguRagu = ref({});
 const showReview = ref(false);
 
+const statusStore = useStatusStore();
+const { jawaban } = storeToRefs(statusStore);
+
 const tokenStore = useTokenStore();
 onMounted(() => {
   tokenStore.loadFromStorage();
+  statusStore.startTimer();
 });
+
+onBeforeUnmount(() => {
+  statusStore.stopTimer();
+});
+
 const soal = computed(() => tokenStore.activeResult?.data || null);
 
 const currentQuestion = computed(() => {
   if (!soal.value) return null;
   return soal.value.soal_generate?.questions?.[currentIndex.value];
+});
+
+const formattedTime = computed(() => {
+  const sisa = jawaban.value?.sisa || 0;
+  const m = String(Math.floor(sisa / 60)).padStart(2, "0");
+  const s = String(sisa % 60).padStart(2, "0");
+  return `${m}:${s}`;
 });
 
 function goToSoal(i) {

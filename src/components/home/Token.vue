@@ -21,11 +21,11 @@
         <div class="space-y-2">
           <div class="flex justify-between">
             <span class="text-sm text-slate-500">Nama Soal</span>
-            <span class="text-middle">{{ jadwal.nama_soal }}</span>
+            <span class="text-middle">{{ namaSoal }}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-sm text-slate-500">Waktu Pengerjaan</span>
-            <span class="text-middle">{{ jadwal.waktu }} Menit</span>
+            <span class="text-middle">{{ waktu }} Menit</span>
           </div>
         </div>
       </div>
@@ -72,14 +72,15 @@
       </button>
     </div>
   </div>
-  <!-- <pre>{{ tokenStore.activeResult?.data?.soal_generate }}</pre> -->
+  {{ jawaban }}
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useTokenStore } from "../../stores/tokenStore";
-import { useHomeStore } from "../../stores/homeStore";
+import { useStatusStore } from "../../stores/statusStore"; // <-- ini
+import { getStatusUji } from "../../services/statusService";
 import BackIcon from "../../assets/icons/BackIcon.svg";
 import Swal from "sweetalert2";
 
@@ -90,27 +91,22 @@ const props = defineProps({
   jadwal: Object,
 });
 
-const emit = defineEmits(["back", "to-test"]);
+const emit = defineEmits(["back", "to-test", "to-finished", "to-expired"]);
 
-const homeStore = useHomeStore();
 const tokenStore = useTokenStore();
 const { loading } = storeToRefs(tokenStore);
+
+const statusStore = useStatusStore(); // <-- ini
 
 const token = ref("");
 const message = ref("");
 const success = ref(false);
 const isVerified = ref(false);
 
-// Get jadwal dari home store
-const jadwal = ref({
-  kd_jenis: homeStore.selectedJadwal?.kd_jenis,
-  nama_soal: homeStore.selectedJadwal?.ijin_nama,
-  waktu: homeStore.selectedJadwal?.waktu,
-});
+const namaSoal = computed(() => props.jadwal?.ijin_nama);
+const waktu = computed(() => props.jadwal?.waktu);
 
-const handleBack = () => {
-  emit("back");
-};
+const handleBack = () => emit("back");
 
 const submitToken = async () => {
   if (!token.value.trim()) {
@@ -120,7 +116,7 @@ const submitToken = async () => {
   }
 
   const result = await tokenStore.verifyToken(
-    jadwal.value.kd_jenis,
+    props.jadwal.kd_jenis,
     token.value
   );
 
@@ -128,12 +124,12 @@ const submitToken = async () => {
   success.value = result.success;
 
   if (result.success) {
-    isVerified.value = true; // tombol berubah jadi "Mulai"
+    isVerified.value = true;
   }
 };
 
 async function startTest() {
-  const result = await Swal.fire({
+  const confirm = await Swal.fire({
     title: "Siap ikut ujian?",
     text: "Pastikan kamu sudah siap sebelum mulai.",
     showCancelButton: true,
@@ -144,8 +140,41 @@ async function startTest() {
     background: "#f9fafb",
   });
 
-  if (result.isConfirmed) {
-    emit("to-test");
+  if (!confirm.isConfirmed) return;
+
+  const payload = {
+    kd_peserta: props.jadwal.kd_peserta,
+    kd_ijin: props.jadwal.kd_ijin,
+    kd_jenis: props.jadwal.kd_jenis,
+  };
+
+  const res = await getStatusUji(payload);
+
+  if (!res.success) {
+    Swal.fire("Error", res.message, "error");
+    return;
+  }
+
+  const { status, jawaban } = res.data;
+
+  // ✅ isi store + auto start timer
+  statusStore.setStatusUji({ status, jawaban });
+  statusStore.startTimer();
+
+  switch (status) {
+    case "mulai":
+    case "lanjut":
+      tokenStore.activeResult = { ...tokenStore.activeResult, jawaban };
+      emit("to-test");
+      break;
+    case "selesai":
+      emit("to-finished");
+      break;
+    case "expired":
+      emit("to-expired");
+      break;
+    default:
+      Swal.fire("Info", `Status tidak diketahui: ${status}`, "warning");
   }
 }
 </script>

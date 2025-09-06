@@ -10,7 +10,9 @@
         @back="handleBack"
         @to-token="goToToken"
         @select-event="handleSelectEvent"
-        @to-test="goToTest" />
+        @to-test="goToTest"
+        @to-finished="goToFinished"
+        @to-expired="goToExpired" />
     </KeepAlive>
   </div>
 </template>
@@ -26,7 +28,8 @@ import { useUserStore } from "../stores/userStore";
 import ListEvent from "../components/home/ListEvent.vue";
 import ListJadwal from "../components/home/ListJadwal.vue";
 import Token from "../components/home/Token.vue";
-import TestPage from "../components/home/TestPage.vue";
+import FinishedPage from "../components/home/FinishedPage.vue";
+import ExpiredPage from "../components/home/ExpiredPage.vue";
 
 const router = useRouter();
 const homeStore = useHomeStore();
@@ -40,7 +43,8 @@ const componentMap = {
   ListEvent,
   ListJadwal,
   Token,
-  TestPage,
+  FinishedPage,
+  ExpiredPage,
 };
 
 const currentView = computed(() => componentMap[view.value] || ListEvent);
@@ -60,6 +64,14 @@ const goToToken = () => {
 
 const goToTest = () => {
   router.push("/soal");
+};
+
+const goToFinished = () => {
+  homeStore.setView("FinishedPage");
+};
+
+const goToExpired = () => {
+  homeStore.setView("ExpiredPage");
 };
 </script>
 
