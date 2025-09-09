@@ -2,7 +2,6 @@
   <div class="bg-slate-300 min-h-screen">
     <HeaderSoal />
     <div v-if="!showFullReview">
-      <!-- semua UI soal lo taruh di sini (progress, question, navigation, dll) -->
       <div v-if="soal && currentQuestion" class="max-w-4xl mx-auto px-6 py-8">
         <!-- Progress & Nomor Soal -->
         <div
@@ -96,14 +95,24 @@
           </button>
         </div>
       </div>
+      <!-- <pre>{{ jawabanStore.answers }}</pre> -->
+      <!-- <pre>{{ jawaban.kd }}</pre> -->
     </div>
 
     <div v-else>
       <!-- full review page -->
       <div class="bg-slate-100 min-h-screen p-6">
-        <h1 class="text-2xl font-bold mb-6">Review Jawaban</h1>
-
+        <div class="flex flex-wrap items-center justify-between">
+          <h1 class="text-2xl font-bold mb-6">Review Jawaban</h1>
+          <div
+            class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 shadow-sm text-sm font-medium">
+            <TimeIcon class="w-4 h-4 text-gray-600" />
+            <span class="hidden sm:inline text-gray-600">Sisa waktu :</span>
+            <span class="text-red-500 font-bold">{{ formattedTime }}</span>
+          </div>
+        </div>
         <div class="grid grid-cols-3 gap-4">
+          <!-- di review button -->
           <button
             v-for="(q, i) in soal.soal_generate.questions"
             :key="i"
@@ -113,22 +122,54 @@
             "
             class="flex flex-col items-center justify-center px-3 py-4 rounded-lg border text-sm transition"
             :class="
-              getAnswerClass(currentIndex, i, userAnswers, q.id, raguRagu)
+              getAnswerClass(currentIndex, i, userAnswers, q.id, raguRagu, true)
             ">
             <span class="text-sm font-bold">Soal {{ i + 1 }}</span>
             <span class="text-xs mt-1">
               {{
-                getAnswerStatus(currentIndex, i, userAnswers, q.id, raguRagu)
+                getAnswerStatus(
+                  currentIndex,
+                  i,
+                  userAnswers,
+                  q.id,
+                  raguRagu,
+                  true
+                )
               }}
             </span>
           </button>
         </div>
 
-        <div class="mt-6 flex justify-between">
-          <button class="btn btn-secondary" @click="backToSoal">
+        <div class="w-50 px-2 py-4 text-sm font-semibold">
+          <div class="flex justify-between">
+            <span>Jumlah Soal</span>
+            <span>: {{ soal.soal_generate.questions.length }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Dijawab</span>
+            <span>: {{ totalAnswered }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Ragu-ragu</span>
+            <span>: {{ totalRagu }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Belum Dikerjakan</span>
+            <span>: {{ totalNotAnswered }}</span>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-6 flex justify-between gap-2">
+          <button
+            class="btn btn-secondary flex items-center gap-2 font-bold text-xs sm:text-sm px-3 py-2 sm:px-5 sm:py-3"
+            @click="backToSoal">
             Kembali ke Soal
           </button>
-          <button class="btn btn-primary" @click="submitUjian">
+
+          <button
+            class="btn btn-primary flex items-center gap-2 font-bold text-xs sm:text-sm px-3 py-2 sm:px-5 sm:py-3"
+            @click="submitUjian">
             Submit Jawaban
           </button>
         </div>
@@ -194,7 +235,12 @@ import { ref, onMounted, computed, onBeforeUnmount } from "vue";
 import { storeToRefs } from "pinia";
 import { useTokenStore } from "../stores/tokenStore";
 import { useStatusStore } from "../stores/statusStore";
-import { getAnswerStatus, getAnswerClass } from "../helpers/soalHelpers";
+import { useJawabanStore } from "../stores/jawabanStore";
+import {
+  isAnswered,
+  getAnswerStatus,
+  getAnswerClass,
+} from "../helpers/soalHelpers";
 
 import MatchingQuestion from "../components/soal/MatchingQuestion.vue";
 import MultipleChoiceQuestion from "../components/soal/MultipleChoiceQuestion.vue";
@@ -208,23 +254,50 @@ import DraftIcon from "../assets/icons/DraftIcon.svg";
 import TimeIcon from "../assets/icons/TimeIcon.svg";
 
 const currentIndex = ref(0);
-const userAnswers = ref({});
 const raguRagu = ref({});
 const showReview = ref(false);
 const showFullReview = ref(false);
 
-function goToReviewPage() {
-  showFullReview.value = true;
-}
-
-function backToSoal() {
-  showFullReview.value = false;
-}
-
+//status pengerjaan
 const statusStore = useStatusStore();
 const { jawaban } = storeToRefs(statusStore);
 
+//soal
 const tokenStore = useTokenStore();
+const soal = computed(() => tokenStore.activeResult?.data || null);
+const currentQuestion = computed(() => {
+  if (!soal.value) return null;
+  return soal.value.soal_generate?.questions?.[currentIndex.value];
+});
+
+//submit jawaban
+const jawabanStore = useJawabanStore();
+const userAnswers = jawabanStore?.answers;
+
+const totalAnswered = computed(() => {
+  return (
+    soal.value?.soal_generate.questions.filter(
+      (q) => isAnswered(userAnswers[q.id]) && !raguRagu.value[q.id]
+    ).length || 0
+  );
+});
+
+const totalRagu = computed(() => {
+  return (
+    soal.value?.soal_generate.questions.filter((q) => raguRagu.value[q.id])
+      .length || 0
+  );
+});
+
+const totalNotAnswered = computed(() => {
+  if (!soal.value) return 0;
+  return (
+    soal.value.soal_generate.questions.length -
+    totalAnswered.value -
+    totalRagu.value
+  );
+});
+
 onMounted(() => {
   tokenStore.loadFromStorage();
   statusStore.startTimer();
@@ -232,13 +305,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   statusStore.stopTimer();
-});
-
-const soal = computed(() => tokenStore.activeResult?.data || null);
-
-const currentQuestion = computed(() => {
-  if (!soal.value) return null;
-  return soal.value.soal_generate?.questions?.[currentIndex.value];
 });
 
 const formattedTime = computed(() => {
@@ -255,5 +321,24 @@ function goToSoal(i) {
 
 function toggleRagu(qId) {
   raguRagu.value[qId] = !raguRagu.value[qId];
+}
+
+function goToReviewPage() {
+  showFullReview.value = true;
+}
+
+function backToSoal() {
+  showFullReview.value = false;
+}
+
+async function submitUjian() {
+  const kd = jawaban.value?.kd; // pastikan ini ada
+  if (!kd) {
+    console.error("kd ujian tidak ditemukan");
+    return;
+  }
+
+  const res = await jawabanStore.submit(kd);
+  console.log("Response API:", res);
 }
 </script>

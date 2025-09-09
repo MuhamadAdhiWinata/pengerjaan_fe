@@ -2,7 +2,9 @@ import api from "./api";
 
 export async function submitJawaban(kd, payload) {
   try {
-    const { data } = await api.post(`/jawaban/submit/${kd}`, payload);
+    const { data } = await api.post(`/jawaban/submit/${kd}`, {
+      jawaban: payload, // <= BUNGKUS DI DALAM "jawaban"
+    });
     return data;
   } catch (error) {
     return {
