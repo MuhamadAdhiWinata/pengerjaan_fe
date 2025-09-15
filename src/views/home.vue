@@ -28,8 +28,6 @@ import { useUserStore } from "../stores/userStore";
 import ListEvent from "../components/home/ListEvent.vue";
 import ListJadwal from "../components/home/ListJadwal.vue";
 import Token from "../components/home/Token.vue";
-import FinishedPage from "../components/home/FinishedPage.vue";
-import ExpiredPage from "../components/home/ExpiredPage.vue";
 
 const router = useRouter();
 const homeStore = useHomeStore();
@@ -43,8 +41,6 @@ const componentMap = {
   ListEvent,
   ListJadwal,
   Token,
-  FinishedPage,
-  ExpiredPage,
 };
 
 const currentView = computed(() => componentMap[view.value] || ListEvent);
@@ -67,11 +63,12 @@ const goToTest = () => {
 };
 
 const goToFinished = () => {
-  homeStore.setView("FinishedPage");
+  console.log("finish");
+  router.push("/finish");
 };
 
 const goToExpired = () => {
-  homeStore.setView("ExpiredPage");
+  router.push("/expired");
 };
 </script>
 

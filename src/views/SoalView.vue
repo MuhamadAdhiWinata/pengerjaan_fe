@@ -253,6 +253,11 @@ import ReviewModal from "../components/soal/ReviewModal.vue";
 import DraftIcon from "../assets/icons/DraftIcon.svg";
 import TimeIcon from "../assets/icons/TimeIcon.svg";
 
+import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
+
+const router = useRouter();
+
 const currentIndex = ref(0);
 const raguRagu = ref({});
 const showReview = ref(false);
@@ -338,7 +343,32 @@ async function submitUjian() {
     return;
   }
 
+  // 🔔 Konfirmasi sebelum submit
+  const confirm = await Swal.fire({
+    title: "Kumpulkan Ujian?",
+    text: "Pastikan semua soal sudah terjawab sesuai keinginanmu.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Kumpulkan",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#2e79b7",
+    cancelButtonColor: "#d33",
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  // ✅ Submit ke server
   const res = await jawabanStore.submit(kd);
+
+  if (res?.success) {
+    await Swal.fire("Berhasil!", "Ujianmu sudah dikumpulkan.", "success");
+
+    // 🔀 Redirect ke /home
+    router.push("/home");
+  } else {
+    Swal.fire("Gagal", res?.message || "Terjadi kesalahan", "error");
+  }
+
   console.log("Response API:", res);
 }
 </script>

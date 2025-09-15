@@ -72,7 +72,6 @@
       </button>
     </div>
   </div>
-  {{ jawaban }}
 </template>
 
 <script setup>
